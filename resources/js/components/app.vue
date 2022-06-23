@@ -1,18 +1,21 @@
 <template>
-    <div class="container">
+    <div >
+    
          <Header/>  
-         <PostList/>    
+         <div class="container">
+            <router-view></router-view>
+         </div>
     </div>
 </template>
 
 <script>
     import Header from './Header.vue'
-    import PostList from './PostList.vue'
+  
     export default {
         name: "App",
         components: {
             Header,
-            PostList
+        
         }
     }
 
