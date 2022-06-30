@@ -1,48 +1,55 @@
 <template>
     <div class="container">
-           <table class="table table-bordered">
-  <thead>
-    <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Title</th>
-      <th scope="col">Image</th>
-      <th scope="col">Categoty</th>
-   
-    </tr>
-  </thead>
-  <tbody>
-    <tr v-for="post in posts" :key="post.id">
-      <th scope="row">{{ post.id }}</th>
-      <td>{{ post.title }}</td>
-      <td> <img :src="`${post.image}`" width="50px;" style="border-radius: 4px;"> </td>
-      <td>{{ post.category.name }}</td>
-      
-    </tr>
-    
-  </tbody>
-</table>
+        <Pagination :pagination="pagination" @on-page-change="getPosts" />
+        <div v-for="post in posts" :key="post.id" class="card text-center my-3">
+            <div class="card-header">
+                <h5>{{ post.title }}</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ post.content }}</p>
+                <router-link :to="{name:'PostDetails', params: { id: post.id}}" class="btn btn-primary">Details</router-link>
+            </div>
+
+        </div>
     </div>
 </template>
 
 <script>
     import Axios from 'axios'
+    import Pagination from './Pagination.vue'
 
     export default {
         name: "PostList",
-        data(){
-            return{
-                posts:[]
+        data() {
+            return {
+                posts: [],
+                pagination: {}
             }
         },
         components: {
-           
+            Pagination
         },
-        mounted(){
-            Axios.get("http://127.0.0.1:8000/api/posts")
-                 .then((res)=>{
-                 this.posts = res.data.posts;
-                 })
-        }    
+        mounted() {
+          this.getPosts();
+        },
+        methods: {
+            getPosts(page = 1) {
+                Axios.get("http://127.0.0.1:8000/api/posts?page=" + page )
+                    .then((res) => {
+                        this.posts = res.data.posts.data;
+                        const {
+                            last_page,
+                            current_page
+                        } = res.data.posts;
+                        this.pagination = {
+                            last_page: last_page,
+                            current_page: current_page
+
+                        }
+
+                    })
+            }
+        }
 
     }
 
